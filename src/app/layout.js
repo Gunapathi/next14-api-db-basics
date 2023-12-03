@@ -1,8 +1,7 @@
 import { Roboto } from 'next/font/google'
 import './globals.css'
-import HeaderComp from '../components/layout/Header'
-import dbConnect from '../utils/db'
-// import dbConnect from '@utils/db'
+import HeaderComp from '@/components/layout/Header'
+import dbConnect from '@/utils/db'
 
 const roboto = Roboto({ subsets: ['latin'], weight: ['400', '500', '700'] })
 
@@ -13,7 +12,8 @@ export const metadata = {
 
 export default async function RootLayout({ children }) {
 
-  await dbConnect();
+  const dbConnected = await dbConnect();
+  // console.log('dbConnected', dbConnected);
 
   return (
     <html lang="en">

@@ -6,31 +6,34 @@ import { useState } from 'react'
 const Register = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [userCreated, setUserCreated] = useState(false)
+  const [userCreatingUser, setUserCreatingUser] = useState(false)
 
   const handleFormSubmit = async (e) => {
 
     e.preventDefault();
-
+    setUserCreatingUser(true);
     try {
-      
       const response = await fetch('/api/register', {
         method: 'POST',
         header: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
+      setUserCreatingUser(false);
+      setUserCreated(true)
 
-      if (data['status'] == 200) {
+      if (response.status === 200) {
+        setUserCreated(true);
+        const data = await response.json();
         return data;
+      } else {
+        console.log('resonsose failed, Error: ' + response.statusText)
       }
-
-      // CONSOLE DATA
-      const data = response.json();
-      console.log('data', data);
 
     } catch (err) {
 
       console.warn(err);
-      console.error('Error sending email:' + err)
+      console.error('Error creating user:' + err);
 
     }
   }
@@ -45,17 +48,22 @@ const Register = () => {
           type="email"
           placeholder='email'
           value={email}
+          disabled={userCreatingUser}
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
           type="password"
           placeholder='password'
           value={password}
+          disabled={userCreatingUser}
           onChange={(e) => setPassword(e.target.value)}
         />
         <button
           type='submit'
-        >Register</button>
+          disabled={userCreatingUser}
+        >
+          Register
+        </button>
         <div className='my-4 text-center text-gray-500'>
           Or Login with Provider
         </div>
@@ -69,8 +77,13 @@ const Register = () => {
           />
           Login With Google</button>
       </form>
-      <div>
-      </div>
+      {userCreated && (
+        <div className='bg-green-500'>
+          <span className='text-white text-xl'>
+            User Registered
+          </span>
+        </div>
+      )}
     </section>
   )
 }
